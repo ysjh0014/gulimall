@@ -1,8 +1,15 @@
 package com.mg.gulimall.product.controller;
 
+import java.net.BindException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
+
+import com.mg.common.valid.AddGroup;
+import com.mg.common.valid.UpdateGroup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +20,8 @@ import com.mg.gulimall.product.entity.BrandEntity;
 import com.mg.gulimall.product.service.BrandService;
 import com.mg.common.utils.PageUtils;
 import com.mg.common.utils.R;
+
+import javax.validation.Valid;
 
 
 /**
@@ -44,7 +53,7 @@ public class BrandController {
      */
     @RequestMapping("/info/{brandId}")
     public R info(@PathVariable("brandId") Long brandId) {
-            BrandEntity brand = brandService.getById(brandId);
+        BrandEntity brand = brandService.getById(brandId);
 
         return R.ok().put("brand", brand);
     }
@@ -53,9 +62,21 @@ public class BrandController {
      * 保存
      */
     @RequestMapping("/save")
-    public R save(@RequestBody BrandEntity brand) {
+    public R save(@Validated(AddGroup.class) @RequestBody BrandEntity brand/*, BindingResult result*/) {
+        /*if (result.hasErrors()) {
+            Map<String, String> map = new HashMap<>();
+            result.getFieldErrors().forEach((item) -> {
+                //获取报错信息
+                String defaultMessage = item.getDefaultMessage();
+                //获取报错属性的名字
+                String field = item.getField();
+                map.put(field, defaultMessage);
+            });
+            return R.error(400, "提交的数据不合法").put("data", map);
+        } else {
             brandService.save(brand);
-
+        }*/
+        brandService.save(brand);
         return R.ok();
     }
 
@@ -63,8 +84,8 @@ public class BrandController {
      * 修改
      */
     @RequestMapping("/update")
-    public R update(@RequestBody BrandEntity brand) {
-            brandService.updateById(brand);
+    public R update(@Validated(UpdateGroup.class) @RequestBody BrandEntity brand) {
+        brandService.updateById(brand);
 
         return R.ok();
     }
@@ -74,7 +95,7 @@ public class BrandController {
      */
     @RequestMapping("/delete")
     public R delete(@RequestBody Long[] brandIds) {
-            brandService.removeByIds(Arrays.asList(brandIds));
+        brandService.removeByIds(Arrays.asList(brandIds));
 
         return R.ok();
     }
