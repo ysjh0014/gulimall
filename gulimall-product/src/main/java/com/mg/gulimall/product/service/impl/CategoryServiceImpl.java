@@ -1,9 +1,11 @@
 package com.mg.gulimall.product.service.impl;
 
+import com.mg.gulimall.product.service.CategoryBrandRelationService;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -19,6 +21,9 @@ import com.mg.gulimall.product.service.CategoryService;
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+
+    @Autowired
+    CategoryBrandRelationService categoryBrandRelationService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -52,6 +57,31 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         //TODO 检查当前要删除的菜单是否被其他地方所引用
 
         baseMapper.deleteBatchIds(asList);
+    }
+
+    @Override
+    public Long[] findCatelogPath(Long catelogId) {
+        List<Long> paths = new ArrayList();
+        List<Long> catelogPath = findParentCatelogPath(catelogId,paths);
+        Collections.reverse(catelogPath);
+        return catelogPath.toArray(new Long[catelogPath.size()]);
+    }
+
+    @Override
+    public void updateCategoryDetail(CategoryEntity category) {
+        this.updateById(category);
+        if(!StringUtils.isEmpty(category.getName())){
+            categoryBrandRelationService.updateCategory(category.getCatId(),category.getName());
+        }
+    }
+
+    private List<Long> findParentCatelogPath(Long catelogId, List<Long> paths) {
+        paths.add(catelogId);
+        CategoryEntity categoryEntity = this.getById(catelogId);
+        if(categoryEntity.getParentCid()!=0){
+            findParentCatelogPath(categoryEntity.getParentCid(),paths);
+        }
+        return paths;
     }
 
 
