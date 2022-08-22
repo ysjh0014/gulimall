@@ -1,6 +1,11 @@
 package com.mg.gulimall.product.service.impl;
 
+import com.mg.gulimall.product.dao.AttrAttrgroupRelationDao;
+import com.mg.gulimall.product.dao.AttrDao;
+import com.mg.gulimall.product.entity.AttrAttrgroupRelationEntity;
+import com.mg.gulimall.product.entity.AttrEntity;
 import com.mysql.cj.util.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Wrapper;
@@ -19,6 +24,11 @@ import com.mg.gulimall.product.service.AttrGroupService;
 
 @Service("attrGroupService")
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEntity> implements AttrGroupService {
+
+    @Autowired
+    AttrAttrgroupRelationDao attrgroupRelationDao;
+    @Autowired
+    AttrDao attrDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {

@@ -193,7 +193,7 @@ export default {
         method: "get",
         params: this.$http.adornParams({})
       }).then(({ data }) => {
-        this.relationAttrs = data.data;
+        this.relationAttrs = data.page;
       });
     },
     dialogClose() {},
