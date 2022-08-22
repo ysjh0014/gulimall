@@ -34,10 +34,12 @@ public class AttrController {
     /**
      * 获取分类规格参数
      */
-    @RequestMapping("/base/list/{catelogId}")
-    public R attrCatelogList(@PathVariable("catelogId") Long catelogId, @RequestParam Map<String, Object> params) {
+    @RequestMapping("/{attrType}/list/{catelogId}")
+    public R attrCatelogList(@PathVariable("catelogId") Long catelogId,
+                             @RequestParam Map<String, Object> params,
+                             @PathVariable("attrType") String attrType) {
 //        PageUtils page = attrService.queryPage(params);
-        PageUtils attrList = attrService.findAttrList(catelogId, params);
+        PageUtils attrList = attrService.findAttrList(catelogId, params, attrType);
         return R.ok().put("page", attrList);
     }
 
@@ -77,9 +79,9 @@ public class AttrController {
      * 修改
      */
     @RequestMapping("/update")
-    public R update(@RequestBody AttrEntity attr) {
-        attrService.updateById(attr);
-
+    public R update(@RequestBody AttrVo attr) {
+//        attrService.updateById(attr);
+        attrService.updateAttrById(attr);
         return R.ok();
     }
 

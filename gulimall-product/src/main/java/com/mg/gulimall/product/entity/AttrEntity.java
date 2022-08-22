@@ -33,7 +33,11 @@ public class AttrEntity implements Serializable {
          * 是否需要检索[0-不需要，1-需要]
          */
             private Integer searchType;
-            /**
+        /**
+         * 值类型，0为销售属性，1为基本属性
+         */
+         private Integer valueType;
+        /**
          * 属性图标
          */
             private String icon;
