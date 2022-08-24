@@ -10,6 +10,7 @@ import com.mg.gulimall.product.service.AttrAttrgroupRelationService;
 import com.mg.gulimall.product.service.AttrService;
 import com.mg.gulimall.product.service.CategoryService;
 import com.mg.gulimall.product.vo.AttrGroupRelationVo;
+import com.mg.gulimall.product.vo.AttrGroupWithAttrsVo;
 import com.mg.gulimall.product.vo.AttrRespVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +42,18 @@ public class AttrGroupController {
 
     @Autowired
     private AttrAttrgroupRelationService relationService;
+
+
+    /**
+     *获取属性分组的关联的所有属性
+     * /product/attrgroup/{catelogId}/withattr
+     */
+    @GetMapping("/{catelogId}/withattr")
+    public R withattrList(@PathVariable("catelogId") Long catelogId) {
+        List<AttrGroupWithAttrsVo> page = attrGroupService.getWithAttr(catelogId);
+        return R.ok().put("page", page);
+    }
+
 
     /**
      *获取属性分组的关联的所有属性

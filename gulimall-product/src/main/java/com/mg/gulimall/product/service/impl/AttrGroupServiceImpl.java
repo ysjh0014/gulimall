@@ -1,15 +1,20 @@
 package com.mg.gulimall.product.service.impl;
 
+import com.mg.common.utils.R;
 import com.mg.gulimall.product.dao.AttrAttrgroupRelationDao;
 import com.mg.gulimall.product.dao.AttrDao;
 import com.mg.gulimall.product.entity.AttrAttrgroupRelationEntity;
 import com.mg.gulimall.product.entity.AttrEntity;
+import com.mg.gulimall.product.service.AttrService;
+import com.mg.gulimall.product.vo.AttrGroupWithAttrsVo;
 import com.mysql.cj.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Wrapper;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -29,6 +34,8 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
     AttrAttrgroupRelationDao attrgroupRelationDao;
     @Autowired
     AttrDao attrDao;
+    @Autowired
+    AttrService attrService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -57,6 +64,20 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
             IPage<AttrGroupEntity> entityIPage = this.page(new Query<AttrGroupEntity>().getPage(params), wrapper);
             return new PageUtils(entityIPage);
         }
+    }
+
+    @Override
+    public List<AttrGroupWithAttrsVo> getWithAttr(Long catelogId) {
+        List<AttrGroupEntity> groupEntities = this.list(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", catelogId));
+        List<AttrGroupWithAttrsVo> collect = groupEntities.stream().map(item -> {
+            AttrGroupWithAttrsVo withAttrsVo = new AttrGroupWithAttrsVo();
+            Long attrGroupId = item.getAttrGroupId();
+            List<AttrEntity> relationAttr = attrService.getRelationAttr(attrGroupId);
+            withAttrsVo.setAttrs(relationAttr);
+            return withAttrsVo;
+        }).collect(Collectors.toList());
+
+        return collect;
     }
 
 }

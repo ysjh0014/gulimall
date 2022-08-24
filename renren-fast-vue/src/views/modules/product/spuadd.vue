@@ -392,12 +392,12 @@ export default {
         brandId: [
           { required: true, message: "请选择一个品牌", trigger: "blur" }
         ],
-        decript: [
-          { required: true, message: "请上传商品详情图集", trigger: "blur" }
-        ],
-        images: [
-          { required: true, message: "请上传商品图片集", trigger: "blur" }
-        ],
+        // decript: [
+        //   { required: true, message: "请上传商品详情图集", trigger: "blur" }
+        // ],
+        // images: [
+        //   { required: true, message: "请上传商品图片集", trigger: "blur" }
+        // ],
         weight: [
           {
             type: "number",

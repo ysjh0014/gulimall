@@ -8,7 +8,9 @@ import com.mg.gulimall.product.entity.CategoryEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -62,6 +64,17 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
     @Override
     public void updateCategory(Long catId, String name) {
         this.baseMapper.updateCategory(catId,name);
+    }
+
+    @Override
+    public List<BrandEntity> getCategoryBrandList(Long catId) {
+        List<CategoryBrandRelationEntity> brandRelationEntities = this.list(new QueryWrapper<CategoryBrandRelationEntity>().eq("catelog_id", catId));
+        List<BrandEntity> brandEntities = brandRelationEntities.stream().map(item -> {
+            BrandEntity brandEntity = brandDao.selectById(item.getBrandId());
+            return brandEntity;
+        }).collect(Collectors.toList());
+
+        return brandEntities;
     }
 
 }
