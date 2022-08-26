@@ -2,6 +2,8 @@ package com.mg.gulimall.coupon.controller;
 
 import java.util.Arrays;
 import java.util.Map;
+
+import com.mg.common.to.SkuReductionVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +29,18 @@ import com.mg.common.utils.R;
 public class SkuFullReductionController {
     @Autowired
     private SkuFullReductionService skuFullReductionService;
+
+
+    /**
+     * 列表
+     */
+    @RequestMapping("/saveInfo")
+    public R saveInfo(@RequestParam SkuReductionVo skuReductionVo) {
+        skuFullReductionService.saveInfo(skuReductionVo);
+
+        return R.ok();
+    }
+
 
     /**
      * 列表

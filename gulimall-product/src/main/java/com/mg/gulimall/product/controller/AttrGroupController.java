@@ -51,7 +51,7 @@ public class AttrGroupController {
     @GetMapping("/{catelogId}/withattr")
     public R withattrList(@PathVariable("catelogId") Long catelogId) {
         List<AttrGroupWithAttrsVo> page = attrGroupService.getWithAttr(catelogId);
-        return R.ok().put("page", page);
+        return R.ok().put("data", page);
     }
 
 

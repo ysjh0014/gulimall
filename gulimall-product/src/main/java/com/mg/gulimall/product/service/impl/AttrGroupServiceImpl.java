@@ -8,6 +8,7 @@ import com.mg.gulimall.product.entity.AttrEntity;
 import com.mg.gulimall.product.service.AttrService;
 import com.mg.gulimall.product.vo.AttrGroupWithAttrsVo;
 import com.mysql.cj.util.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,6 +72,7 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         List<AttrGroupEntity> groupEntities = this.list(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", catelogId));
         List<AttrGroupWithAttrsVo> collect = groupEntities.stream().map(item -> {
             AttrGroupWithAttrsVo withAttrsVo = new AttrGroupWithAttrsVo();
+            BeanUtils.copyProperties(item,withAttrsVo);
             Long attrGroupId = item.getAttrGroupId();
             List<AttrEntity> relationAttr = attrService.getRelationAttr(attrGroupId);
             withAttrsVo.setAttrs(relationAttr);

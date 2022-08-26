@@ -89,12 +89,6 @@
                 <version>2.1.0.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.alibaba.nacos</groupId>
-                        <artifactId>nacos-client</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>
