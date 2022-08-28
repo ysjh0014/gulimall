@@ -7,10 +7,12 @@ import com.mg.gulimall.product.entity.*;
 import com.mg.gulimall.product.feign.CouponFeignService;
 import com.mg.gulimall.product.service.*;
 import com.mg.gulimall.product.vo.*;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -94,10 +96,10 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         //5.保存spu的积分信息   gulimall_sms->sms_spu_bounds
         Bounds bounds = spuInfoVo.getBounds();
         SpuBoundsVo spuBoundsVo = new SpuBoundsVo();
-        BeanUtils.copyProperties(bounds,spuBoundsVo);
+        BeanUtils.copyProperties(bounds, spuBoundsVo);
         spuBoundsVo.setSpuId(spuInfoEntity.getId());
         R saveBounds = couponFeignService.saveBounds(spuBoundsVo);
-        if(saveBounds.getCode()!=0){
+        if (saveBounds.getCode() != 0) {
             log.error("远远程保存spu积分信息失败");
         }
 
@@ -142,17 +144,57 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                     return skuSaleAttrValueEntity;
                 }).collect(Collectors.toList());
                 skuSaleAttrValueService.saveBatch(skuSaleAttrValueEntities);
+
+
+                //4).sku的满减优惠等信息      gulimall_sms->sms_sku_ladder\sms_sku_full_reduction\sms_member_price
+                SkuReductionVo skuReductionVo = new SkuReductionVo();
+                BeanUtils.copyProperties(sku, skuReductionVo);
+                skuReductionVo.setSkuId(skuInfoEntity.getSkuId());
+                if (skuReductionVo.getFullCount() > 0 || skuReductionVo.getFullPrice().compareTo(new BigDecimal("0")) == 1) {
+                    R saveInfo = couponFeignService.saveInfo(skuReductionVo);
+                    if (saveInfo.getCode() != 0) {
+                        log.error("远程保存sku优惠信息失败");
+                    }
+                }
             });
-            //4).sku的满减优惠等信息      gulimall_sms->sms_sku_ladder\sms_sku_full_reduction\sms_member_price
-            SkuReductionVo skuReductionVo = new SkuReductionVo();
-
-
-
 
 
         }
 
 
+    }
+
+    @Override
+    public PageUtils queryPageByParams(Map<String, Object> params) {
+
+        QueryWrapper<SpuInfoEntity> queryWrapper = new QueryWrapper<>();
+        String key = (String)params.get("key");
+        if(!StringUtils.isEmpty(key)){
+            queryWrapper.and(item->{
+                item.eq("spu_name",key).or().eq("id",key);
+            });
+        }
+
+        String catelogId = (String)params.get("catelogId");
+        if(!StringUtils.isEmpty(catelogId)&&!"0".equals(catelogId)){
+            queryWrapper.eq("catalog_id",catelogId);
+        }
+
+        String status = (String)params.get("status");
+        if(!StringUtils.isEmpty(status)){
+            queryWrapper.eq("publish_status",status);
+        }
+
+        String brandId = (String)params.get("brandId");
+        if(!StringUtils.isEmpty(brandId)&&!"0".equals(brandId)){
+            queryWrapper.eq("brand_id",brandId);
+        }
+        IPage<SpuInfoEntity> page = this.page(
+                new Query<SpuInfoEntity>().getPage(params),
+                queryWrapper
+        );
+
+        return new PageUtils(page);
     }
 
     private void saveSpuInfo(SpuInfoEntity spuInfoEntity) {

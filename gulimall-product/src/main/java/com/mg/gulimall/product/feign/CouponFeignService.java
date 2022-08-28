@@ -1,5 +1,6 @@
 package com.mg.gulimall.product.feign;
 
+import com.mg.common.to.SkuReductionVo;
 import com.mg.common.to.SpuBoundsVo;
 import com.mg.common.utils.R;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -12,5 +13,5 @@ public interface CouponFeignService {
     R saveBounds(@RequestBody SpuBoundsVo spuBoundsVo);
 
     @RequestMapping("/coupon/skufullreduction/saveInfo")
-    R saveInfo(@RequestBody SpuBoundsVo spuBoundsVo);
+    R saveInfo(@RequestBody SkuReductionVo spuBoundsVo);
 }

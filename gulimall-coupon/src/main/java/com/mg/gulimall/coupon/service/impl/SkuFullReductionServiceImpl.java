@@ -4,6 +4,7 @@ import com.mg.common.to.MemberPrice;
 import com.mg.common.to.SkuReductionVo;
 import com.mg.gulimall.coupon.entity.MemberPriceEntity;
 import com.mg.gulimall.coupon.entity.SkuLadderEntity;
+import com.mg.gulimall.coupon.service.MemberPriceService;
 import com.mg.gulimall.coupon.service.SkuLadderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,8 @@ public class SkuFullReductionServiceImpl extends ServiceImpl<SkuFullReductionDao
 
     @Autowired
     SkuLadderService skuLadderService;
+    @Autowired
+    MemberPriceService memberPriceService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -64,17 +67,17 @@ public class SkuFullReductionServiceImpl extends ServiceImpl<SkuFullReductionDao
 
         //sms_member_price
         List<MemberPrice> prices = skuReductionVo.getMemberPrice();
-        prices.stream().map(price->{
+        List<MemberPriceEntity> collectMembwe = prices.stream().map(price -> {
             MemberPriceEntity memberPrice = new MemberPriceEntity();
             memberPrice.setSkuId(skuReductionVo.getSkuId());
             memberPrice.setMemberPrice(price.getPrice());
             memberPrice.setMemberLevelName(price.getName());
             memberPrice.setMemberLevelId(price.getId());
             return memberPrice;
+        }).filter(item -> {
+            return item.getMemberPrice().compareTo(new BigDecimal("0")) == 1;
         }).collect(Collectors.toList());
-
-
-        List<MemberPrice> memberPrice = skuReductionVo.getMemberPrice();
+        memberPriceService.saveBatch(collectMembwe);
     }
 
 }
