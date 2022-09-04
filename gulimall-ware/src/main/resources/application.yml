@@ -2,9 +2,17 @@
 spring:
   datasource:
     username: root
-    password: root
-    url: jdbc:mysql://8.131.78.61:3306/gulimall_wms
+    password: ysjh0014.cn
+    url: jdbc:mysql://8.131.78.61:7070/gulimall_wms
     driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 8.131.78.61:8848
+  application:
+    name: gulimall-ware
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
   global-config:
@@ -13,7 +21,7 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
 server:
-  port: 10001
+  port: 10002
 logging:
   level:
     com.mg.gulimall: debug

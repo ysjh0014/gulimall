@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 8.131.78.61:8848
+  application:
+    name: gulimall-search
