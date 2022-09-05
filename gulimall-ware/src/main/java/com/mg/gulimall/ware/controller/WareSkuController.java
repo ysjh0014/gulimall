@@ -1,7 +1,10 @@
 package com.mg.gulimall.ware.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+
+import com.mg.common.to.SkuStacksVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +30,18 @@ import com.mg.common.utils.R;
 public class WareSkuController {
     @Autowired
     private WareSkuService wareSkuService;
+
+
+    /**
+     * 列表
+     */
+    @RequestMapping("/getSkuStocks")
+    public R getSkuStocks(@RequestBody List<Long> ids) {
+        List<SkuStacksVo> skuStocks = wareSkuService.getSkuStocks(ids);
+        return R.ok().setData(skuStocks);
+    }
+
+
 
     /**
      * 列表

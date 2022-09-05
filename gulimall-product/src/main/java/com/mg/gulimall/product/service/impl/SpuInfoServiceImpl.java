@@ -197,6 +197,37 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         return new PageUtils(page);
     }
 
+    @Override
+    public void up(Long spuId) {
+        // 1 组装数据 查出当前spuId对应的所有sku信息
+         List<SkuInfoEntity> skus = skuInfoService.getSkusById(spuId);
+        // 查询这些sku是否有库存
+        List<Long> skuIds = skus.stream().map(item -> item.getSkuId()).collect(Collectors.toList());
+
+        // 2 封装每个sku的信息
+
+
+        // 3.查询当前sku所有可以被用来检索的规格属性
+        // 获取所有的spu商品的id 然后查询这些id中那些是可以被检索的 [数据库中目前 4、5、6、11不可检索]
+
+
+        // 可检索的id集合
+
+
+        // 根据商品id 过滤不可检索的商品 最后映射号检索属性
+
+
+        // skuId 对应 是否有库存
+
+        //发送远程调用，查询是否有库存
+
+
+
+
+
+
+    }
+
     private void saveSpuInfo(SpuInfoEntity spuInfoEntity) {
         this.baseMapper.insert(spuInfoEntity);
     }
