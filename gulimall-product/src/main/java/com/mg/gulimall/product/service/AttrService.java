@@ -9,6 +9,7 @@ import com.mg.gulimall.product.vo.AttrVo;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 商品属性
@@ -34,5 +35,7 @@ public interface AttrService extends IService<AttrEntity> {
     PageUtils getNoRelationAttr(Map<String, Object> params, Long attrgroupId);
 
     void delRelation(List<AttrGroupRelationVo> attrGroupRelationVo);
+
+    Set<Long> selectSearch(List<Long> attIds);
 }
 

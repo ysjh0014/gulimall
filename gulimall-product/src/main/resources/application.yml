@@ -24,9 +24,9 @@ server:
 logging:
   level:
     com.mg.gulimall: debug
-feign:
-  client:
-    config:
-      defaule:
-        connect-timeout: 10000
-        read-timeout: 600000
+#feign:
+#  client:
+#    config:
+#      defaule:
+#        connect-timeout: 10000
+#        read-timeout: 600000

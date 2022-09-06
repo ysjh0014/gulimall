@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -210,6 +211,11 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
             return relationEntity;
         }).collect(Collectors.toList());
         attrgroupRelationDao.deleteBatchRelation(collects);
+    }
+
+    @Override
+    public Set<Long> selectSearch(List<Long> attIds) {
+        return this.baseMapper.selectSearch(attIds);
     }
 
 }
