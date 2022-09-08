@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -42,12 +43,12 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         List<CategoryEntity> categoryEntities = baseMapper.selectList(null);
 
         List<CategoryEntity> levelMenus = categoryEntities.stream().filter(categoryEntity ->
-             categoryEntity.getParentCid() == 0
+                categoryEntity.getParentCid() == 0
         ).map(categoryEntity -> {
-            categoryEntity.setChildren(getChildren(categoryEntity,categoryEntities));
+            categoryEntity.setChildren(getChildren(categoryEntity, categoryEntities));
             return categoryEntity;
-        }).sorted((menu1,menu2) -> {
-            return (menu1.getSort()==null?0:menu1.getSort()) - (menu2.getSort()==null?0:menu2.getSort());
+        }).sorted((menu1, menu2) -> {
+            return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
         }).collect(Collectors.toList());
 
 
@@ -64,7 +65,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Override
     public Long[] findCatelogPath(Long catelogId) {
         List<Long> paths = new ArrayList();
-        List<Long> catelogPath = findParentCatelogPath(catelogId,paths);
+        List<Long> catelogPath = findParentCatelogPath(catelogId, paths);
         Collections.reverse(catelogPath);
         return catelogPath.toArray(new Long[catelogPath.size()]);
     }
@@ -72,8 +73,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Override
     public void updateCategoryDetail(CategoryEntity category) {
         this.updateById(category);
-        if(!StringUtils.isEmpty(category.getName())){
-            categoryBrandRelationService.updateCategory(category.getCatId(),category.getName());
+        if (!StringUtils.isEmpty(category.getName())) {
+            categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
         }
     }
 
@@ -87,19 +88,21 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Override
     public Map<String, List<CateLog2Vo>> getCatalogJson() {
+        //将数据库的多次查询变为一次查询
+        List<CategoryEntity> categoryEntities = baseMapper.selectList(null);
         //查出所有分类
-        List<CategoryEntity> levelOne = getLevelOne();
+        List<CategoryEntity> levelOne = getParent_cid(categoryEntities,0L);
         Map<String, List<CateLog2Vo>> parent_cid = levelOne.stream().collect(Collectors.toMap(item -> item.getCatId().toString(), v -> {
             //查询每一个一级分类的二级分类
-            List<CategoryEntity> entityList = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", v.getCatId()));
+            List<CategoryEntity> entityList = getParent_cid(categoryEntities,v.getCatId());
             //封装二级分类
             List<CateLog2Vo> cateLog2Vos = null;
-            if (entityList != null&&entityList.size()!=0) {
+            if (entityList != null && entityList.size() != 0) {
                 cateLog2Vos = entityList.stream().map(level2 -> {
                     CateLog2Vo cateLog2Vo = new CateLog2Vo(v.getCatId().toString(), null, level2.getCatId().toString(), level2.getName());
                     //查询当前二级分类的三级分类，封装成vo
-                    List<CategoryEntity> entities = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", level2.getCatId()));
-                    if(entities!=null&&entities.size()!=0){
+                    List<CategoryEntity> entities = getParent_cid(categoryEntities,level2.getCatId());
+                    if (entities != null && entities.size() != 0) {
                         List<CateLog2Vo.CateLog3Vo> cateLog3Vos = entities.stream().map(leve3 -> {
                             CateLog2Vo.CateLog3Vo cateLog3Vo = new CateLog2Vo.CateLog3Vo(leve3.getCatId().toString(), level2.getCatId().toString(), leve3.getName());
                             return cateLog3Vo;
@@ -118,14 +121,14 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     private List<Long> findParentCatelogPath(Long catelogId, List<Long> paths) {
         paths.add(catelogId);
         CategoryEntity categoryEntity = this.getById(catelogId);
-        if(categoryEntity.getParentCid()!=0){
-            findParentCatelogPath(categoryEntity.getParentCid(),paths);
+        if (categoryEntity.getParentCid() != 0) {
+            findParentCatelogPath(categoryEntity.getParentCid(), paths);
         }
         return paths;
     }
 
 
-    private List<CategoryEntity> getChildren(CategoryEntity root, List<CategoryEntity> all){
+    private List<CategoryEntity> getChildren(CategoryEntity root, List<CategoryEntity> all) {
 
         List<CategoryEntity> categoryEntityList = all.stream().filter((categoryEntity -> {
             return categoryEntity.getParentCid() == root.getCatId();
@@ -133,9 +136,15 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             categoryEntity.setChildren(getChildren(categoryEntity, all));
             return categoryEntity;
         }).sorted((menu1, menu2) -> {
-            return (menu1.getSort()==null?0:menu1.getSort()) - (menu2.getSort()==null?0:menu2.getSort());
+            return (menu1.getSort() == null ? 0 : menu1.getSort()) - (menu2.getSort() == null ? 0 : menu2.getSort());
         }).collect(Collectors.toList());
 
         return categoryEntityList;
+    }
+
+
+    public List<CategoryEntity> getParent_cid(List<CategoryEntity> categoryEntities, Long parentCid) {
+        List<CategoryEntity> collect = categoryEntities.stream().filter(item -> item.getParentCid() == parentCid).collect(Collectors.toList());
+        return collect;
     }
 }
