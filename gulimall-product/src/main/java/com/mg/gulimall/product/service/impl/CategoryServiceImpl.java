@@ -1,10 +1,13 @@
 package com.mg.gulimall.product.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.mg.gulimall.product.service.CategoryBrandRelationService;
 import com.mg.gulimall.product.vo.CateLog2Vo;
 import com.sun.org.apache.xml.internal.resolver.CatalogEntry;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,6 +30,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Autowired
     CategoryBrandRelationService categoryBrandRelationService;
+    @Autowired
+    StringRedisTemplate redisTemplate;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -86,8 +91,32 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return categoryEntities;
     }
 
+
     @Override
     public Map<String, List<CateLog2Vo>> getCatalogJson() {
+        //将缓存中放json字符串，拿出的json字符串，还需你转为能用的对象类型[序列化与反序列化]
+
+        //1.加入缓存逻辑，缓存中存的数据是json字符串
+        //JSON跨语言、跨平台兼容
+        String catelogJson = redisTemplate.opsForValue().get("catelogJson");
+        if(StringUtils.isEmpty(catelogJson)){
+            //缓存中没有，查数据库
+            Map<String, List<CateLog2Vo>> catalogJsonFordb = getCatalogJsonFordb();
+            //查到的数据再放入缓存中，将对象转为json放到缓存中
+            String s = JSON.toJSONString(catalogJsonFordb);
+            redisTemplate.opsForValue().set("catelogJson",s);
+            return catalogJsonFordb;
+        }
+        //转为指定的对象
+        Map<String, List<CateLog2Vo>> stringListMap = JSON.parseObject(catelogJson, new TypeReference<Map<String, List<CateLog2Vo>>>() {
+        });
+        return stringListMap;
+    }
+
+
+
+
+    public Map<String, List<CateLog2Vo>> getCatalogJsonFordb() {
         //将数据库的多次查询变为一次查询
         List<CategoryEntity> categoryEntities = baseMapper.selectList(null);
         //查出所有分类
