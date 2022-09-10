@@ -4,16 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.mg.gulimall.product.service.CategoryBrandRelationService;
 import com.mg.gulimall.product.vo.CateLog2Vo;
-import com.sun.org.apache.xml.internal.resolver.CatalogEntry;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -98,13 +95,14 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
         //1.加入缓存逻辑，缓存中存的数据是json字符串
         //JSON跨语言、跨平台兼容
-        String catelogJson = redisTemplate.opsForValue().get("catelogJson");
+        ValueOperations<String, String> ops = redisTemplate.opsForValue();
+        String catelogJson = ops.get("catelogJson");
         if(StringUtils.isEmpty(catelogJson)){
             //缓存中没有，查数据库
             Map<String, List<CateLog2Vo>> catalogJsonFordb = getCatalogJsonFordb();
             //查到的数据再放入缓存中，将对象转为json放到缓存中
             String s = JSON.toJSONString(catalogJsonFordb);
-            redisTemplate.opsForValue().set("catelogJson",s);
+            ops.set("catelogJson",s);
             return catalogJsonFordb;
         }
         //转为指定的对象
