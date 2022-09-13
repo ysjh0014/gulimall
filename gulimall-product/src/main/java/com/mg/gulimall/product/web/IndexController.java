@@ -4,6 +4,7 @@ import com.mg.gulimall.product.entity.CategoryEntity;
 import com.mg.gulimall.product.service.CategoryService;
 import com.mg.gulimall.product.vo.CateLog2Vo;
 import org.redisson.api.RCountDownLatch;
+import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -49,6 +50,25 @@ public class IndexController {
     public Map<String, List<CateLog2Vo>> getCatalogJson(){
         Map<String, List<CateLog2Vo>> catalogJson = categoryService.getCatalogJson();
         return catalogJson;
+    }
+
+    /**
+     * redisson可重入锁测试
+     */
+    @ResponseBody
+    @GetMapping("hello")
+    public void hello(){
+        RLock lock = redissonClient.getLock("my-lock");
+        lock.lock();
+        try {
+            System.out.println("获取到锁。。。。"+Thread.currentThread().getId());
+            Thread.sleep(30000);
+        } catch (Exception e){
+
+        }finally {
+            lock.unlock();
+            System.out.println("解锁。。。。"+Thread.currentThread().getId());
+        }
     }
 
 
