@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class SkuModelVo implements Serializable {
+public class SkuModelVo{
     private Long skuId;
 
     private Long spuId;
@@ -34,10 +34,10 @@ public class SkuModelVo implements Serializable {
 
     private String catalogName;
 
-    private List<Attrs> attrs;
+    private List<Attr> attrs;
 
     @Data
-    public static class Attrs implements Serializable{
+    public static class Attr{
         private Long attrId;
 
         private String attrName;

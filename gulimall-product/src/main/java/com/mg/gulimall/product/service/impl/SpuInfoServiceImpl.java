@@ -233,10 +233,10 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         // 根据商品id 过滤不可检索的商品 最后映射号检索属性
         Set<Long> attSearchs = attrService.selectSearch(attIds);
 
-        List<SkuModelVo.Attrs> collect = attrValueEntities.stream().filter(item -> {
+        List<SkuModelVo.Attr> collect = attrValueEntities.stream().filter(item -> {
             return attSearchs.contains(item.getAttrId());
         }).map(attr -> {
-            SkuModelVo.Attrs attrs = new SkuModelVo.Attrs();
+            SkuModelVo.Attr attrs = new SkuModelVo.Attr();
             BeanUtils.copyProperties(attr, attrs);
             return attrs;
         }).collect(Collectors.toList());
