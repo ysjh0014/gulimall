@@ -17,18 +17,17 @@ public class IndexController {
     @Autowired
     SearchMallService searchService;
 
-    @GetMapping({"/", "/search.html"})
-    @ResponseBody
+    @GetMapping({"/", "/list.html"})
     public String index(SearchParam searchParam, Model model, HttpServletRequest request) {
         searchParam.set_queryString(request.getQueryString());
         SearchResult result = searchService.getSearchResult(searchParam);
         model.addAttribute("result",result);
-        return "search";
+        return "list";
     }
 
-    @GetMapping({"/", "/list.html"})
-    public String list(Model model) {
-        return "search";
-    }
+//    @GetMapping({"/", "/list.html"})
+//    public String list(Model model) {
+//        return "search";
+//    }
 
 }

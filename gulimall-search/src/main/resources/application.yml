@@ -8,5 +8,9 @@ spring:
     name: gulimall-search
   thymeleaf:
     cache: false
+    prefix: classpath:/templates/
 server:
   port: 12000
+logging:
+  level:
+    com.mg.gulimall: info

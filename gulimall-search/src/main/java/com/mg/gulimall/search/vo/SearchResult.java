@@ -34,7 +34,7 @@ public class SearchResult {
 
     @Data
     @AllArgsConstructor
-    private class BrandVo{
+    public static class BrandVo{
         private Long brandId;
         private String brandName;
         private String brandImg;
@@ -42,15 +42,15 @@ public class SearchResult {
 
     @Data
     @AllArgsConstructor
-    private class AttrVo{
+    public static class AttrVo{
         private Long attrId;
         private String attrName;
-        private String attrValue;
+        private List<String> attrValue;
     }
 
     @Data
     @AllArgsConstructor
-    private class CatalogVo{
+    public static class CatalogVo{
         private Long catalogId;
         private String catalogName;
     }
