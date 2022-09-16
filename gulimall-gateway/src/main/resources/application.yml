@@ -48,6 +48,7 @@ spring:
           filters:
             - RewritePath=/api/search/(?<segment>.*),/$\{segment}
 
+        #为什么要路径重写
         - id: admin_route
           uri: lb://renren-fast
           predicates:
