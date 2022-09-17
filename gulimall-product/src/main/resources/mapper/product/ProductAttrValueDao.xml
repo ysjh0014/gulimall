@@ -4,15 +4,21 @@
 <mapper namespace="com.mg.gulimall.product.dao.ProductAttrValueDao">
 
     <!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="com.mg.gulimall.product.entity.ProductAttrValueEntity" id="productAttrValueMap">
-                    <result property="id" column="id"/>
-                    <result property="spuId" column="spu_id"/>
-                    <result property="attrId" column="attr_id"/>
-                    <result property="attrName" column="attr_name"/>
-                    <result property="attrValue" column="attr_value"/>
-                    <result property="attrSort" column="attr_sort"/>
-                    <result property="quickShow" column="quick_show"/>
-            </resultMap>
+    <resultMap id="ProductGroupAttrsMap" type="com.mg.gulimall.product.vo.SpuItemAttrGroupVo">
+        <result property="groupName" column="attr_group_name"/>
+        <collection property="attrs" ofType="com.mg.gulimall.product.vo.Attr">
+            <result property="attrId" column="attr_id"/>
+            <result property="attrName" column="attr_name"/>
+            <result property="attrValue" column="attr_value"/>
+        </collection>
+    </resultMap>
+    <select id="getProductGroupAttrsBySpuId" resultMap="ProductGroupAttrsMap">
+        SELECT ag.attr_group_name,attr.attr_id,attr.attr_name,attr.attr_value
+        FROM pms_attr_attrgroup_relation aar
+        LEFT JOIN pms_attr_group ag ON aar.attr_group_id=ag.attr_group_id
+        LEFT JOIN pms_product_attr_value attr ON aar.attr_id=attr.attr_id
+        WHERE attr.spu_id = #{spuId} AND ag.catelog_id = #{catalogId}
+    </select>
 
 
 </mapper>

@@ -3,6 +3,7 @@ package com.mg.gulimall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mg.common.utils.PageUtils;
 import com.mg.gulimall.product.entity.ProductAttrValueEntity;
+import com.mg.gulimall.product.vo.SpuItemAttrGroupVo;
 
 import java.util.List;
 import java.util.Map;
@@ -21,5 +22,7 @@ public interface ProductAttrValueService extends IService<ProductAttrValueEntity
     void saveAttrValue(List<ProductAttrValueEntity> collect);
 
     List<ProductAttrValueEntity> selectListAttrs(Long spuId);
+
+    List<SpuItemAttrGroupVo> getProductGroupAttrsBySpuId(Long spuId, Long catalogId);
 }
 

@@ -17,7 +17,7 @@ public class IndexController {
     @Autowired
     SearchMallService searchService;
 
-    @GetMapping({"/", "/list.html"})
+    @GetMapping({"/list.html"})
     public String index(SearchParam searchParam, Model model, HttpServletRequest request) {
         searchParam.set_queryString(request.getQueryString());
         SearchResult result = searchService.getSearchResult(searchParam);

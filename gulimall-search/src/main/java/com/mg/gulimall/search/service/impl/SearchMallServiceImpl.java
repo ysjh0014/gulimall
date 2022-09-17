@@ -28,6 +28,8 @@ import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -107,9 +110,9 @@ public class SearchMallServiceImpl implements SearchMallService {
         if (attrs != null && attrs.size() != 0) {
             attrs.forEach(attr -> {
                 String[] attrIds = attr.split("_");
-                queryBuilder.must(QueryBuilders.termQuery("attr.attrId", attrIds[0]));
+                queryBuilder.must(QueryBuilders.termQuery("attrs.attrId", attrIds[0]));
                 String[] attrValues = attrIds[1].split(":");
-                queryBuilder.must(QueryBuilders.termsQuery("attr.attrValue", attrValues));
+                queryBuilder.must(QueryBuilders.termsQuery("attrs.attrValue", attrValues));
             });
         }
         NestedQueryBuilder nestedQueryBuilder = QueryBuilders.nestedQuery("attrs", queryBuilder, ScoreMode.None);
@@ -129,7 +132,13 @@ public class SearchMallServiceImpl implements SearchMallService {
         searchRequest.size(EsConstant.PRODUCT_PAGESIZE);
 
         //TODO 高亮
-
+        if(!StringUtils.isEmpty(searchParam.getKeyword())){
+            HighlightBuilder highlightBuilder = new HighlightBuilder();
+            highlightBuilder.field("skuTitle");
+            highlightBuilder.preTags("<b style='color:red'>");
+            highlightBuilder.postTags("</b>");
+            searchRequest.highlighter(highlightBuilder);
+        }
 
         //聚合
         //1.按照brand聚合
@@ -171,7 +180,11 @@ public class SearchMallServiceImpl implements SearchMallService {
                 String sourceAsString = hit.getSourceAsString();
                 SkuModelVo skuModelVo = JSON.parseObject(sourceAsString, SkuModelVo.class);
                 // TODO 设置高亮属性
-
+                if(!StringUtils.isEmpty(searchParam.getKeyword())){
+                    HighlightField skuTitle = hit.getHighlightFields().get("skuTitle");
+                    String string = skuTitle.getFragments()[0].string();
+                    skuModelVo.setSkuTitle(string);
+                }
                 skuModels.add(skuModelVo);
             }
             searchResult.setSkuModelVoList(skuModels);
