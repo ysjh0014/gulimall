@@ -14,12 +14,20 @@ public class MyThreadPoolConfig {
     @Bean
     public ThreadPoolExecutor threadPoolExecutor(ThreadPoolConfigProperties properties) {
         return new ThreadPoolExecutor(
+               10,
+                100,
+                5,
+                TimeUnit.SECONDS,
+                new LinkedBlockingDeque<>(10000),
+                new ThreadPoolExecutor.AbortPolicy()
+        );
+        /*return new ThreadPoolExecutor(
                 properties.getCorePoolSize(),
                 properties.getMaxPoolSize(),
                 properties.getKeepAliveTime(),
                 TimeUnit.SECONDS,
                 new LinkedBlockingDeque<>(10000),
                 new ThreadPoolExecutor.AbortPolicy()
-        );
+        );*/
     }
 }

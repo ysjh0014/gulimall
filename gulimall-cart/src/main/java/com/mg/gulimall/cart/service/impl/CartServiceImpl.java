@@ -86,9 +86,9 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartItemVo getCartItem(Long skuId) {
-        /*BoundHashOperations<String, Object, Object> cartItemOps = getCartItemOps();
+        BoundHashOperations<String, Object, Object> cartItemOps = getCartItemOps();
         String s = (String) cartItemOps.get(skuId.toString());
-        CartItemVo cartItemVo = JSON.parseObject(s, CartItemVo.class);*/
+        CartItemVo cartItemVo = JSON.parseObject(s, CartItemVo.class);
         return null;
     }
 

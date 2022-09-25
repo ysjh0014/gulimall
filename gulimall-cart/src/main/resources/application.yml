@@ -12,6 +12,7 @@ server:
   port: 40000
 gulimall:
   thread:
-    core-size: 20
-    max-size: 200
-    keep-alive-time: 10
+    core-size: 10
+    max-size: 100
+    keep-alive-time: 5
+nacos-dis
