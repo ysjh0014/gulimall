@@ -27,7 +27,7 @@ public class CartController {
         cartService.addCartItem(skuId, num);
         attributes.addAttribute("skuId", skuId);
         //为了防止成功页刷新可以重复提交添加商品，我们不直接转到成功页
-        return "redirect:http://cart.gulimall.com/addCartItemSuccess";
+        return "redirect:http://localhost:40000/addCartItemSuccess";
     }
 
     @RequestMapping("/addCartItemSuccess")
