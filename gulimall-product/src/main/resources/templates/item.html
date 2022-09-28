@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="/index/scss/jd.css"/>
     <link rel="stylesheet" href="/index/scss/header.css"/>
     <link rel="stylesheet" type="text/css" href="/index/bootstrap/css/bootstrap.css"/>
+    <script src="/js/jquery-1.12.4.js"></script>
 </head>
 <body>
 <div id="max">
@@ -268,7 +269,7 @@
                 <div class="nav_top_two"><input type="text"/>
                     <button>搜索</button>
                 </div>
-                <div class="nav_top_three"><a href="http://cart.gulimall.com/cart.html">我的购物车</a><span
+                <div class="nav_top_three"><a href="http://localhost:40000/cart.html">我的购物车</a><span
                         class="glyphicon glyphicon-shopping-cart"></span>
                     <div class="nav_top_three_1">
                         <img src="/index/img/44.png"/>购物车还没有商品，赶紧选购吧！
@@ -680,7 +681,7 @@
 
                     <div class="box-btns-two"
                          th:if="${item.seckillSkuVo == null }">
-                        <a class="addToCart" href="http://cart.gulimall.com/addToCart" th:attr="skuId=${item.info.skuId}">
+                        <a class="addToCart" href="http://localhost:40000/addToCart" th:attr="skuId=${item.info.skuId}">
                             加入购物车
                         </a>
                     </div>
@@ -1386,10 +1387,11 @@
     };
 
 
-    $(".addToCart").click(function () {
+    $("#addToCart").click(function () {
+        debugger;
         let skuId = $(this).attr("skuId");
         let num = $("#productNum").val();
-        location.href = "http://cart.gulimall.com/addCartItem?skuId=" + skuId + "&num=" + num;
+        location.href = "http://localhost:40000/addCartItem?skuId=" + skuId + "&num=" + num;
         return false;
     });
 

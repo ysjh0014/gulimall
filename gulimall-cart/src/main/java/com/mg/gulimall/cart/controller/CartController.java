@@ -5,6 +5,7 @@ import com.mg.gulimall.cart.vo.CartItemVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -22,7 +23,7 @@ public class CartController {
      *
      * @return
      */
-    @RequestMapping("/addCartItem")
+    @GetMapping("/addToCart")
     public String addCartItem(@RequestParam("skuId") Long skuId, @RequestParam("num") Integer num, RedirectAttributes attributes) {
         cartService.addCartItem(skuId, num);
         attributes.addAttribute("skuId", skuId);
@@ -30,7 +31,7 @@ public class CartController {
         return "redirect:http://localhost:40000/addCartItemSuccess";
     }
 
-    @RequestMapping("/addCartItemSuccess")
+    @GetMapping("/addCartItemSuccess")
     public String addCartItemSuccess(@RequestParam("skuId") Long skuId, Model model) {
         CartItemVo cartItemVo = cartService.getCartItem(skuId);
         model.addAttribute("cartItem", cartItemVo);
