@@ -10,7 +10,6 @@ spring:
     host: ${ipAddr}
   thymeleaf:
     cache: false
-    prefix: classpath:/templates/
 server:
   port: 40000
 gulimall:

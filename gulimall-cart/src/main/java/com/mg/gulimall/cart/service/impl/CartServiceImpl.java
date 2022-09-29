@@ -89,7 +89,7 @@ public class CartServiceImpl implements CartService {
         BoundHashOperations<String, Object, Object> cartItemOps = getCartItemOps();
         String s = (String) cartItemOps.get(skuId.toString());
         CartItemVo cartItemVo = JSON.parseObject(s, CartItemVo.class);
-        return null;
+        return cartItemVo;
     }
 
     private BoundHashOperations<String, Object, Object> getCartItemOps() {
@@ -100,7 +100,8 @@ public class CartServiceImpl implements CartService {
             return redisTemplate.boundHashOps(CartConstant.CART_PREFIX + userInfoTo.getUserId());
         } else {
             //1.2 未登录使用user-key操作redis
-            return redisTemplate.boundHashOps(CartConstant.CART_PREFIX + userInfoTo.getUserKey());
+            return redisTemplate.boundHashOps("d48cca0c-fbe0-4a1e-9a38-21808066251e");
+//            return redisTemplate.boundHashOps(CartConstant.CART_PREFIX + userInfoTo.getUserKey());
         }
     }
 }
