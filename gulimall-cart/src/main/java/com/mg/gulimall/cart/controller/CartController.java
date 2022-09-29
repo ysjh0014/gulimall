@@ -35,6 +35,6 @@ public class CartController {
     public String addCartItemSuccess(@RequestParam("skuId") Long skuId, Model model) {
         CartItemVo cartItemVo = cartService.getCartItem(skuId);
         model.addAttribute("cartItem", cartItemVo);
-        return "success";
+        return "index";
     }
 }
