@@ -9,11 +9,13 @@ spring:
   redis:
     host: ${ipAddr}
   thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
     cache: false
 server:
   port: 40000
 gulimall:
   thread:
-    core-size: 10
-    max-size: 100
-    keep-alive-time: 5
+    core-size: 20
+    max-size: 200
+    keep-alive-time: 10

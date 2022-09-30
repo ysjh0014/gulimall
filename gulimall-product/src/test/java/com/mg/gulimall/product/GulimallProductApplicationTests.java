@@ -6,6 +6,8 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
+
 
 /**
  * 1、引入oss-starter
@@ -49,6 +51,10 @@ public class GulimallProductApplicationTests {
 //        ossClient.putObject(putObjectRequest);
 //
 //        System.out.println("上传文件成功！");
+
+        BigDecimal totalAmount = new BigDecimal(0);
+        totalAmount = totalAmount.add(new BigDecimal("5000"));
+        System.out.println(totalAmount);
     }
 
 }

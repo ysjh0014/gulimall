@@ -2,6 +2,7 @@ package com.mg.gulimall.cart.controller;
 
 import com.mg.gulimall.cart.service.CartService;
 import com.mg.gulimall.cart.vo.CartItemVo;
+import com.mg.gulimall.cart.vo.CartVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,5 +37,12 @@ public class CartController {
         CartItemVo cartItemVo = cartService.getCartItem(skuId);
         model.addAttribute("cartItem", cartItemVo);
         return "index";
+    }
+
+    @RequestMapping("/cart.html")
+    public String getCartList(Model model) {
+        CartVo cartVo=cartService.getCart();
+        model.addAttribute("cart", cartVo);
+        return "cart";
     }
 }

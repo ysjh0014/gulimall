@@ -9,6 +9,7 @@ import com.mg.gulimall.cart.interceptor.CartInterceptor;
 import com.mg.gulimall.cart.service.CartService;
 import com.mg.gulimall.cart.to.UserInfoTo;
 import com.mg.gulimall.cart.vo.CartItemVo;
+import com.mg.gulimall.cart.vo.CartVo;
 import com.mg.gulimall.cart.vo.SkuInfoVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,12 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -92,6 +95,38 @@ public class CartServiceImpl implements CartService {
         return cartItemVo;
     }
 
+    @Override
+    public CartVo getCart() {
+        CartVo cartVo = new CartVo();
+        UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();
+        //1 用户未登录，直接通过user-key获取临时购物车
+        List<CartItemVo> tempCart = getCartByKey(userInfoTo.getUserKey());
+        if (userInfoTo.getUserId()==null) {
+            List<CartItemVo> cartItemVos = tempCart;
+            BigDecimal reduce = cartItemVos.stream().map(aa -> aa.getTotalPrice()).reduce(BigDecimal.ZERO, BigDecimal::add);
+            cartVo.setTotalAmount(reduce);
+            cartVo.setItems(cartItemVos);
+        }else {
+            //2 用户登录
+            //2.1 查询userId对应的购物车
+            List<CartItemVo> userCart = getCartByKey(userInfoTo.getUserId().toString());
+            //2.2 查询user-key对应的临时购物车，并和用户购物车合并
+            if (tempCart!=null&&tempCart.size()>0){
+                BoundHashOperations<String, Object, Object> ops = redisTemplate.boundHashOps(CartConstant.CART_PREFIX + userInfoTo.getUserId());
+                for (CartItemVo cartItemVo : tempCart) {
+                    userCart.add(cartItemVo);
+                    //2.3 在redis中更新数据
+                    addCartItem(cartItemVo.getSkuId(), cartItemVo.getCount());
+                }
+            }
+            cartVo.setItems(userCart);
+            //2.4 删除临时购物车数据
+            redisTemplate.delete(CartConstant.CART_PREFIX + userInfoTo.getUserKey());
+        }
+
+        return cartVo;
+    }
+
     private BoundHashOperations<String, Object, Object> getCartItemOps() {
         //1判断是否已经登录
         UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();
@@ -103,5 +138,19 @@ public class CartServiceImpl implements CartService {
             return redisTemplate.boundHashOps("d48cca0c-fbe0-4a1e-9a38-21808066251e");
 //            return redisTemplate.boundHashOps(CartConstant.CART_PREFIX + userInfoTo.getUserKey());
         }
+    }
+
+    private List<CartItemVo> getCartByKey(String userKey) {
+        BoundHashOperations<String, Object, Object> ops = redisTemplate.boundHashOps("d48cca0c-fbe0-4a1e-9a38-21808066251e");
+
+        List<Object> values = ops.values();
+        if (values != null && values.size() > 0) {
+            List<CartItemVo> cartItemVos = values.stream().map(obj -> {
+                String json = (String) obj;
+                return JSON.parseObject(json, CartItemVo.class);
+            }).collect(Collectors.toList());
+            return cartItemVos;
+        }
+        return null;
     }
 }
