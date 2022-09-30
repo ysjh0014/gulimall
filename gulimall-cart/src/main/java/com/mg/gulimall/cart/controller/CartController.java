@@ -45,4 +45,35 @@ public class CartController {
         model.addAttribute("cart", cartVo);
         return "cart";
     }
+
+    /**
+     * 选中购物车项
+     * @param isChecked
+     * @param skuId
+     * @return
+     */
+    @RequestMapping("/checkCart")
+    public String checkCart(@RequestParam("isChecked") Integer isChecked,@RequestParam("skuId")Long skuId) {
+        cartService.checkCart(skuId, isChecked);
+        return "redirect:http://localhost:40000/cart.html";
+    }
+
+
+    /**
+     * 修改购物车数量
+     */
+    @RequestMapping("/countItem")
+    public String changeItemCount(@RequestParam("skuId") Long skuId, @RequestParam("num") Integer num) {
+        cartService.changeItemCount(skuId, num);
+        return "redirect:http://localhost:40000/cart.html";
+    }
+
+    /**
+     * 删除购物车项
+     */
+    @RequestMapping("/deleteItem")
+    public String deleteItem(@RequestParam("skuId") Long skuId) {
+        cartService.deleteItem(skuId);
+        return "redirect:http://localhost:40000/cart.html";
+    }
 }

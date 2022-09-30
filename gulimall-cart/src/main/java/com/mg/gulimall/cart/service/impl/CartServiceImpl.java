@@ -127,6 +127,31 @@ public class CartServiceImpl implements CartService {
         return cartVo;
     }
 
+    //修改skuId对应购物车项的选中状态
+    @Override
+    public void checkCart(Long skuId, Integer isChecked) {
+        BoundHashOperations<String, Object, Object> ops = getCartItemOps();
+        String cartJson = (String) ops.get(skuId.toString());
+        CartItemVo cartItemVo = JSON.parseObject(cartJson, CartItemVo.class);
+        cartItemVo.setCheck(isChecked==1);
+        ops.put(skuId.toString(),JSON.toJSONString(cartItemVo));
+    }
+
+    @Override
+    public void changeItemCount(Long skuId, Integer num) {
+        BoundHashOperations<String, Object, Object> ops = getCartItemOps();
+        String cartJson = (String) ops.get(skuId.toString());
+        CartItemVo cartItemVo = JSON.parseObject(cartJson, CartItemVo.class);
+        cartItemVo.setCount(num);
+        ops.put(skuId.toString(),JSON.toJSONString(cartItemVo));
+    }
+
+    @Override
+    public void deleteItem(Long skuId) {
+        BoundHashOperations<String, Object, Object> ops = getCartItemOps();
+        ops.delete(skuId.toString());
+    }
+
     private BoundHashOperations<String, Object, Object> getCartItemOps() {
         //1判断是否已经登录
         UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();

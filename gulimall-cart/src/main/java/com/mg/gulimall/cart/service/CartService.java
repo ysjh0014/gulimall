@@ -10,4 +10,10 @@ public interface CartService {
     CartItemVo getCartItem(Long skuId);
 
     CartVo getCart();
+
+    void checkCart(Long skuId, Integer isChecked);
+
+    void changeItemCount(Long skuId, Integer num);
+
+    void deleteItem(Long skuId);
 }
