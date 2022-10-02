@@ -22,6 +22,7 @@
         <module>gulimall-search</module>
         <module>gulimall-third-party</module>
         <module>gulimall-cart</module>
+        <module>gulimall-auth-server</module>
     </modules>
 
 </project>

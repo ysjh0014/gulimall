@@ -95,10 +95,11 @@
       </b>
       <ul>
         <li>
-          <a href="http://auth.gulimall.com/login.html">你好，[[${session.loginUser==null?"请登录":session.loginUser.nickname}]]</a>
+          <a th:if="${session.loginUser!=null}">欢迎：[[${session.loginUser==null?"":session.loginUser.nickname}]]</a>
+          <a href="http://localhost:10003/login.html" th:if="${session.loginUser==null}">欢迎：请登录</a>
         </li>
         <li>
-          <a href="http://auth.gulimall.com/reg.html" class="li_2">免费注册</a>
+          <a th:if="${session.loginUser==null}" href="http://localhost:10003/reg.html" class="li_2">免费注册</a>
         </li>
         <span>|</span>
         <li>
@@ -580,6 +581,8 @@
 
 </body>
 <script type="text/javascript">
+  var sessionParam = '[[${session.}]]';
+  alert(sessionParam);
   function search() {
     var keyword=$("#searchText").val()
     window.location.href="http://localhost:12000/list.html?keyword="+keyword;

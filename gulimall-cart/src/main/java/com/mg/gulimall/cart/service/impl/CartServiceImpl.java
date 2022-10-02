@@ -166,8 +166,8 @@ public class CartServiceImpl implements CartService {
     }
 
     private List<CartItemVo> getCartByKey(String userKey) {
-        BoundHashOperations<String, Object, Object> ops = redisTemplate.boundHashOps("d48cca0c-fbe0-4a1e-9a38-21808066251e");
-
+//        BoundHashOperations<String, Object, Object> ops = redisTemplate.boundHashOps("d48cca0c-fbe0-4a1e-9a38-21808066251e");
+        BoundHashOperations<String, Object, Object> ops = redisTemplate.boundHashOps(CartConstant.CART_PREFIX+userKey);
         List<Object> values = ops.values();
         if (values != null && values.size() > 0) {
             List<CartItemVo> cartItemVos = values.stream().map(obj -> {

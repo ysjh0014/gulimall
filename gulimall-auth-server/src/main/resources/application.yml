@@ -1,0 +1,26 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 8.131.78.61:8848
+  application:
+    name: gulimall-auth-server
+  thymeleaf:
+    cache: false
+  redis:
+    host: 123.60.98.9
+  session:
+    store-type: redis
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+server:
+  port: 10003
+logging:
+  level:
+    com.mg.gulimall: debug
+

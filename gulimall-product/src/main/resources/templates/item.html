@@ -61,12 +61,12 @@
             `
             <ul class="header_ul_right">
                 <li style="border: 0;">
-                    <a th:if="${session.loginUser == null}" href="http://auth.gulimall.com/login.html"
+                    <a th:if="${session.loginUser == null}" href="http://localhost:10003/login.html"
                        class="aa">你好，请登录</a>
                     <a th:if="${session.loginUser != null}">欢迎, [[${session.loginUser.nickname}]]</a>
                 </li>
                 <li>
-                    <a th:if="${session.loginUser == null}" href="http://auth.gulimall.com/reg.html"
+                    <a th:if="${session.loginUser == null}" href="http://localhost:10003/reg.html"
                        style="color: red;">免费注册</a>
                 </li>
                 <li><a href="http://member.gulimall.com/memberOrder.html" class="aa">我的订单</a> |</li>
