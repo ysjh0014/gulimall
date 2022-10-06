@@ -6,7 +6,6 @@ import com.mg.common.constant.AuthServerConstant;
 import com.mg.common.utils.R;
 import com.mg.common.vo.MemberResponseVo;
 import com.mg.gulimall.auth.server.feign.MemberFeignService;
-import com.mg.gulimall.auth.server.vo.SessionVo;
 import com.mg.gulimall.auth.server.vo.UserLoginVo;
 import com.mg.gulimall.auth.server.vo.UserRegisterVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,9 +119,9 @@ public class LoginController {
     @RequestMapping("/login.html")
     public String loginPage(HttpSession session, Model model) {
         if (session.getAttribute(AuthServerConstant.LOGIN_USER) != null) {
-            SessionVo attribute = (SessionVo)session.getAttribute(AuthServerConstant.LOGIN_USER);
+            MemberResponseVo attribute = (MemberResponseVo)session.getAttribute(AuthServerConstant.LOGIN_USER);
             model.addAttribute("session", attribute);
-            return "redirect:http://localhost:10001/";
+            return "redirect:http://localhost:10001/index.html";
         } else {
             return "login";
         }
